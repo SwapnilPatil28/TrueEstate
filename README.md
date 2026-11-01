@@ -291,30 +291,7 @@ npm run build
 
 ---
 
-## 9. 4-Minute Demo Script
-
-1. **Problem (30s):** Open an aggregator listing (e.g. NoBroker). Note that the listing advertises possession by December 2026 and claims the builder is reputable.
-2. **Launch Live Audit (60s):** Paste the listing URL into TrueEstate. Watch the SSE progress card activate:
-   - Extract agent parses listing claims.
-   - Lawyer agent drives Karnataka RERA.
-   - Builder agent checks portfolio projects in parallel.
-   - News and community agents scan news and Reddit.
-3. **The Reveal (60s):** The contradiction card highlights a major timeline mismatch:
-   - *Listing advertised:* December 2026.
-   - *Official RERA record:* December 2028 after 2 formal extensions and 4 active consumer complaints.
-   - *Builder track record:* 3 of 5 checked promoter projects suffered extensions or lapsed status.
-   - *Community evidence:* 2 independent Reddit threads verified waterlogging and basement seepage during monsoons.
-4. **Verifiable Proof in Agent Console (45s):**
-   - Open the Agent Console panel.
-   - Inspect the real TinyFish `run_id`, the exact goal string passed to the browser automation agent, and the returned raw JSON payload.
-   - Point out the **LIVE** badge verifying execution against the real portal.
-5. **Ongoing Protection (45s):**
-   - Click **"＋ Watch this project"**.
-   - Navigate to the **Watchlist** to view the active cron monitor and baseline state snapshot.
-
----
-
-## 10. Legal & Ethical Safeguards
+## 9. Legal & Ethical Safeguards
 
 - **Public Data Only:** TrueEstate accesses only publicly accessible state government records, news articles, and public discussion threads.
 - **No Fabricated Data:** If a portal or search fails, the application marks the section as *Not Retrieved* and lowers confidence rather than guessing.
