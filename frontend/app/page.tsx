@@ -24,6 +24,7 @@ export default function Home() {
         : {
             project_name: value("project_name"),
             builder: value("builder"),
+            locality: value("locality") || null,
             city: value("city"),
             state: value("state"),
             rera_id: value("rera_id") || null,
@@ -132,6 +133,12 @@ export default function Home() {
                     BUILDER
                     <input name="builder" placeholder="Builder / promoter" required minLength={2} />
                   </label>
+                  <label>
+                    LOCALITY <span className="optional">OPTIONAL</span>
+                    <input name="locality" placeholder="e.g. Whitefield" />
+                  </label>
+                </div>
+                <div className="form-grid">
                   <label>
                     CITY
                     <input name="city" placeholder="City" required minLength={2} />

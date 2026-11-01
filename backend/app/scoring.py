@@ -151,6 +151,7 @@ def evidence_findings(
     news: list[dict[str, Any]],
     residents: list[dict[str, Any]],
     retrieved_at: str,
+    locality: list[dict[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
     findings: list[dict[str, Any]] = []
     negative_news = next(
@@ -174,31 +175,60 @@ def evidence_findings(
                 "source_url": negative_news.get("url"),
                 "evidence_urls": [negative_news.get("url")],
                 "retrieved_at": retrieved_at,
-                "tinyfish_tool": "search",
+                "tinyfish_tool": negative_news.get("tinyfish_tool", "search"),
                 "run_id": negative_news.get("trace_id") or negative_news.get("run_id"),
                 "excerpt": classification["excerpt"],
             }
         )
 
-    issue_categories = {"waterlogging", "power", "water_supply", "structural", "traffic"}
-    for category in sorted(issue_categories):
+    issue_categories = {
+        "waterlogging": {"waterlogging", "flooding", "drainage"},
+        "power": {"power"},
+        "water_supply": {"water_supply"},
+        "structural": {"structural"},
+        "traffic": {"traffic"},
+    }
+    all_residents = residents + [
+        item
+        for item in (locality or [])
+        if item.get("source_type") == "resident_forum"
+    ]
+    verified_categories: dict[str, list[dict[str, Any]]] = {}
+    for category, equivalent_categories in issue_categories.items():
         matching = [
             item
-            for item in residents
+            for item in all_residents
             if item.get("classification", {}).get("verified")
             and item["classification"].get("relevant") is True
-            and item["classification"].get("issue_category") == category
+            and item["classification"].get("issue_category") in equivalent_categories
             and item.get("url")
         ]
         independent_threads = list({item["url"]: item for item in matching}.values())
         if len(independent_threads) < 2:
             continue
-        evidence = independent_threads[:2]
+        verified_categories[category] = independent_threads[:2]
+    if verified_categories:
+        evidence = [
+            item
+            for category_sources in verified_categories.values()
+            for item in category_sources
+        ]
         findings.append(
             {
                 "type": "resident_issue",
                 "severity": "warning",
-                "title": f"Multiple public resident threads report {category.replace('_', ' ')} issues",
+                "title": (
+                    "Multiple public resident threads report "
+                    + ", ".join(
+                        (
+                            "waterlogging / flooding / drainage"
+                            if category == "waterlogging"
+                            else category.replace("_", " ")
+                        )
+                        for category in verified_categories
+                    )
+                    + " issues"
+                ),
                 "points": 10,
                 "source_url": evidence[0]["url"],
                 "evidence_urls": [item["url"] for item in evidence],

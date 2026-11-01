@@ -179,6 +179,60 @@ def test_negative_news_requires_relevance_and_a_verified_quote():
     assert findings[0]["source_url"] == negative_article["url"]
 
 
+def test_locality_news_does_not_create_a_builder_negative_news_deduction():
+    locality_article = {
+        "url": "https://news.example/locality",
+        "source_type": "news",
+        "source_scope": "locality",
+        "classification": {
+            "relevant": True,
+            "negative": True,
+            "verified": True,
+            "excerpt": "Several roads in the neighborhood flooded.",
+        },
+    }
+
+    assert evidence_findings([], [], "2026-01-01T00:00:00Z", [locality_article]) == []
+
+
+def test_two_locality_forum_threads_create_cited_livability_finding():
+    locality_threads = [
+        {
+            "url": "https://reddit.com/r/city/post-1",
+            "source_type": "resident_forum",
+            "source_scope": "locality",
+            "classification": {
+                "relevant": True,
+                "issue_category": "flooding",
+                "verified": True,
+                "excerpt": "Water covered the road after the rain.",
+            },
+        },
+        {
+            "url": "https://reddit.com/r/city/post-2",
+            "source_type": "resident_forum",
+            "source_scope": "locality",
+            "classification": {
+                "relevant": True,
+                "issue_category": "flooding",
+                "verified": True,
+                "excerpt": "The junction was flooded for hours.",
+            },
+        },
+    ]
+
+    findings = evidence_findings(
+        [], [], "2026-01-01T00:00:00Z", locality_threads
+    )
+
+    assert len(findings) == 1
+    assert findings[0]["points"] == 10
+    assert findings[0]["evidence_urls"] == [
+        "https://reddit.com/r/city/post-1",
+        "https://reddit.com/r/city/post-2",
+    ]
+
+
 def test_builder_history_score_uses_only_checked_external_project_records():
     projects = [
         {

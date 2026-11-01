@@ -8,6 +8,7 @@ class AuditCreate(BaseModel):
     listing_url: HttpUrl | None = None
     project_name: str | None = Field(default=None, min_length=2, max_length=160)
     builder: str | None = Field(default=None, min_length=2, max_length=160)
+    locality: str | None = Field(default=None, min_length=2, max_length=120)
     city: str | None = Field(default=None, min_length=2, max_length=100)
     state: str = Field(default="Karnataka", min_length=2, max_length=100)
     rera_id: str | None = Field(default=None, max_length=100)
@@ -27,6 +28,16 @@ class AuditCreate(BaseModel):
             raise ValueError(
                 "Enter a listing URL or provide project name, builder and city."
             )
+
+
+class AuditRetry(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    project_name: str | None = Field(default=None, min_length=2, max_length=160)
+    builder: str | None = Field(default=None, min_length=2, max_length=160)
+    locality: str | None = Field(default=None, min_length=2, max_length=120)
+    city: str | None = Field(default=None, min_length=2, max_length=100)
+    state: str | None = Field(default=None, min_length=2, max_length=100)
 
 
 class CandidateSelection(BaseModel):

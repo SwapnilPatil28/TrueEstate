@@ -100,7 +100,7 @@ def events_after(audit_id: str, event_id: int) -> list[sqlite3.Row]:
 def list_runs(audit_id: str) -> list[dict[str, Any]]:
     with connect() as connection:
         rows = connection.execute(
-            "SELECT * FROM runs WHERE audit_id = ? ORDER BY started_at",
+            "SELECT * FROM runs WHERE audit_id = ? ORDER BY started_at, rowid",
             (audit_id,),
         ).fetchall()
     result = []
